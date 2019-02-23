@@ -11,10 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/', ['as' => 'activity.index', 'uses' => 'ActivityIndexController@index']);
+
+Route::prefix('activity')->group(function () {
+    Route::get('/create', ['as' => 'activity.create-form', 'uses' => 'ActivityCreateController@createForm']);
+
+    Route::post('/create', ['as' => 'activity.create', 'uses' => 'ActivityCreateController@create']);
+});
+
