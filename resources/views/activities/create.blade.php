@@ -1,36 +1,36 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        <form id="create_activity_form">
-            @csrf
-            <div class="alert alert-success" role="alert" style="display: none;">
-                A simple success alert—check it out!
-            </div>
-            <div class="alert alert-danger" role="alert" style="display: none;">
-                A simple danger alert—check it out!
-            </div>
-            <h5>Create an activity</h5>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea class="form-control" name="description" id="description" rows="3" style="resize: none;"></textarea>
-            </div>
-            <div class="row">
-                <div class="col-sm-9">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form id="create_activity_form">
+                    @csrf
+                    <div class="alert alert-success" role="alert" style="display: none;"></div>
+                    <div class="alert alert-danger" role="alert" style="display: none;"></div>
+                    <h5>Create an activity</h5>
                     <div class="form-group">
-                        <label for="datetime_range">Datetime range</label>
-                        <input type="text" name="datetime_range" id="datetime_range" class="form-control"/>
-                        <small>format: mm/dd/yyyy hh:mm</small>
+                        <label for="description">Description</label>
+                        <textarea class="form-control" name="description" id="description" rows="3" style="resize: none;"></textarea>
                     </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label for="time_spent">Time spent</label>
-                        <input type="text" name="time_spent" id="time_spent" class="form-control" readonly/>
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                <label for="datetime_range">Datetime range</label>
+                                <input type="text" name="datetime_range" id="datetime_range" class="form-control"/>
+                                <small>format: mm/dd/yyyy hh:mm</small>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="time_spent">Time spent</label>
+                                <input type="text" name="time_spent" id="time_spent" class="form-control" readonly/>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <button class="btn btn-primary" id="create_activity_submit_btn">Submit</button>
+                </form>
             </div>
-            <button class="btn btn-primary" id="create_activity_submit_btn">Submit</button>
-        </form>
+        </div>
     </div>
     <script>
         $(document).ready(function() {
@@ -41,7 +41,7 @@
            calculateTimeSpent();
         });
 
-        $('input[name="datetime_range"]').daterangepicker({
+        $('#datetime_range').daterangepicker({
             timePicker: true,
             startDate: moment().startOf('hour'),
             endDate: moment().startOf('hour').add(1, 'hour'),
@@ -60,6 +60,11 @@
 
             let form = $(this);
 
+            $('.alert-success').empty();
+            $('.alert-success').hide();
+            $('.alert-danger').empty();
+            $('.alert-danger').hide();
+
             if(!validateForm(form)) {
                 return;
             }
@@ -70,11 +75,9 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.error) {
-                        $('.alert-danger').empty();
                         $('.alert-danger').append('<p>' + response.message + '<p>');
                         $('.alert-danger').show();
                     } else {
-                        $('.alert-success').empty();
                         $('.alert-success').append('<p>' + response.message + '<p>');
                         $('.alert-success').show();
                     }

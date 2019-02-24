@@ -179,7 +179,8 @@ return [
          * Activity Service Providers
          */
         App\Activity\Providers\FactoryServiceProvider::class,
-        App\Activity\Providers\RepositoryServiceProvider::class
+        App\Activity\Providers\RepositoryServiceProvider::class,
+        App\Activity\Providers\ListServiceProvider::class
 
     ],
 
