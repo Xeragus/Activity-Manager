@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gsixdev
- * Date: 24.2.19
- * Time: 12:21
- */
 
 namespace App\Activity\Providers;
 
