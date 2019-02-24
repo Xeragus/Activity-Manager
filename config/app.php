@@ -186,6 +186,7 @@ return [
          * Report Service Providers
          */
         App\Report\Providers\RepositoryServiceProvider::class,
+        App\Report\Providers\ReportServiceProvider::class
 
     ],
 

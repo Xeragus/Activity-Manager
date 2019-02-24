@@ -29,6 +29,10 @@ Route::prefix('activity')->group(function () {
 Route::prefix('report')->group(function() {
     Route::get('/{url}', ['as' => 'report.access-url', 'uses' => 'ReportReviewThroughAccessUrlController@display']);
 
+    Route::get('/print/daily', ['as' => 'reports.print', 'uses' => 'ReportPrintController@display']);
+
+    Route::post('/print/daily', ['as' => 'reports.print.daily', 'uses' => 'ReportPrintController@getDailyActivityTime']);
+
     Route::post('/email-url', ['as' => 'report.email.url', 'uses' => 'EmailAccessUrlToUserController@emailUrlToUser']);
 });
 

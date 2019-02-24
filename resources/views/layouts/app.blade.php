@@ -36,7 +36,10 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a href="{{route('activity.dashboard')}}" class="nav-link">Report</a>
+                            <a href="{{route('activity.dashboard')}}" class="nav-link">Activity report</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('reports.print')}}" class="nav-link">Print report</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route('activity.create')}}" class="nav-link">Create an activity</a>

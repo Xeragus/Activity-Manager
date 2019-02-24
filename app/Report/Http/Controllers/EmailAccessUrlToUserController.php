@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Activity\Requests\EmailUrlToUserRequest;
+use App\Report\Requests\EmailUrlToUserRequest;
 use App\Report\Commands\EmailAccessUrlToUserCommand;
 use Illuminate\Contracts\Bus\Dispatcher;
 
@@ -12,7 +12,6 @@ class EmailAccessUrlToUserController extends Controller
     {
         $data = $request->all();
         $error = false;
-        $activities = [];
 
         try {
             $commandBus->dispatch(new EmailAccessUrlToUserCommand($data));
