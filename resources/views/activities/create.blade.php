@@ -2,6 +2,7 @@
 @section('content')
     <div class="container">
         <form id="create_activity_form">
+            @csrf
             <div class="alert alert-success" role="alert" style="display: none;">
                 A simple success alert—check it out!
             </div>
@@ -17,7 +18,7 @@
                 <div class="col-sm-9">
                     <div class="form-group">
                         <label for="datetime_range">Datetime range</label>
-                        <input type="text" name="datetime_range" id="datetime_range" class="form-control" required/>
+                        <input type="text" name="datetime_range" id="datetime_range" class="form-control"/>
                         <small>format: mm/dd/yyyy hh:mm</small>
                     </div>
                 </div>
@@ -40,19 +41,6 @@
            calculateTimeSpent();
         });
 
-        function calculateTimeSpent() {
-            let dateRange = $('#datetime_range').val();
-            let dateTimeRangeParts = dateRange.split('-');
-            let dateTimeFrom = new moment(dateTimeRangeParts[0], 'MM-DD-YYYY HH:mm');
-            let dateTimeTo = new moment(dateTimeRangeParts[1], 'MM-DD-YYYY HH:mm');
-            let duration = moment.duration(dateTimeTo.diff(dateTimeFrom));
-            let hours = parseInt(duration.asHours());
-            let minutes = parseInt(duration.asMinutes())%60;
-            let timeSpent = hours + 'h '+ minutes+'m';
-
-            $('#time_spent').val(timeSpent);
-        }
-
         $('input[name="datetime_range"]').daterangepicker({
             timePicker: true,
             startDate: moment().startOf('hour'),
@@ -69,7 +57,12 @@
 
         $('#create_activity_form').on('submit', function(e) {
             e.preventDefault();
+
             let form = $(this);
+
+            if(!validateForm(form)) {
+                return;
+            }
 
             $.ajax({
                 url: '/activity/create',
@@ -88,6 +81,41 @@
                 }
             });
         });
+
+        function validateForm(form) {
+            $('.alert-danger').empty();
+            $('.alert-danger').hide();
+
+            if ($(form).find('#description').val() == '') {
+                $('.alert-danger').append('Description is a required field');
+                $('.alert-danger').show();
+
+                return false;
+            }
+
+            if ($(form).find('#datetime_range').val() == '') {
+                $('.alert-danger').append('Datetime range is a required field');
+                $('.alert-danger').show();
+
+                return false;
+            }
+
+            return true;
+        }
+
+        function calculateTimeSpent() {
+            let dateRange = $('#datetime_range').val();
+            let dateTimeRangeParts = dateRange.split('-');
+            let dateTimeFrom = new moment(dateTimeRangeParts[0], 'MM-DD-YYYY HH:mm A');
+            let dateTimeTo = new moment(dateTimeRangeParts[1], 'MM-DD-YYYY HH:mm A');
+            let duration = moment.duration(dateTimeTo.diff(dateTimeFrom));
+            let hours = parseInt(duration.asHours());
+            let minutes = parseInt(duration.asMinutes())%60;
+            let timeSpent = hours + 'h '+ minutes+'m';
+
+            $('#time_spent').val(timeSpent);
+        }
+
 
     </script>
 @endsection
