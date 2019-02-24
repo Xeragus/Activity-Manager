@@ -19,7 +19,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/', ['as' => 'activity.index', 'uses' => 'ActivityIndexController@index']);
 
 Route::prefix('activity')->group(function () {
-    Route::get('/create', ['as' => 'activity.create-form', 'uses' => 'ActivityCreateController@createForm']);
+    Route::get('/create', ['as' => 'activity.create-form', 'uses' => 'ActivityCreateController@createForm'])->middleware('auth');
 
     Route::post('/create', ['as' => 'activity.create', 'uses' => 'ActivityCreateController@create']);
 });
