@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Activity\ActivityList\ActivityListInterface;
 use App\Activity\Requests\ActivityReportRequest;
+use App\Activity\Requests\EmailUrlToUserRequest;
 use Carbon\Carbon;
 
 class ActivityReportController extends Controller
@@ -44,5 +45,28 @@ class ActivityReportController extends Controller
             'message' => $message,
             'activities' => $activities
         ]);
+    }
+
+    public function emailUrlToUser(EmailUrlToUserRequest $request)
+    {
+        $data = $request->all();
+        $error = false;
+        $message = '';
+        $activities = [];
+
+        try {
+
+
+            $message = 'Unique access URL sent to the following e-mail address: ' . $data['email'];
+        } catch(\Exception $e) {
+            $error = true;
+            $message = $e->getMessage();
+        }
+
+        return response()->json([
+            'error' => $error,
+            'message' => $message
+        ]);
+
     }
 }

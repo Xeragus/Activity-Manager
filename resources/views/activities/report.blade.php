@@ -1,11 +1,11 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+        <div class="alert alert-success" role="alert" style="display: none;"></div>
+        <div class="alert alert-danger" role="alert" style="display: none;"></div>
         <div class="row">
             <div class="col-md-4">
                 <form id="generate_report_form">
-                    <div class="alert alert-success" role="alert" style="display: none;"></div>
-                    <div class="alert alert-danger" role="alert" style="display: none;"></div>
                     @csrf
                     <div class="form-group">
                         <div class="form-group">
@@ -15,6 +15,16 @@
                         </div>
                     </div>
                     <a href="javascript:;" class="btn btn-primary" id="report_form_submit_btn">Generate report</a><br>
+
+                </form>
+                <hr>
+                <form id="email_access_url_form">
+                    @csrf
+                    <div class="form-group">
+                        <label for="email">Send an access URL to this email address:</label>
+                        <input type="email" class="form-control" id="email_report" name="email">
+                    </div>
+                    <button class="btn btn-success" id="email_access_url_form_submit_btn" disabled>E-mail access url</button>
                 </form>
             </div>
             <div class="col-md-8" id="activities_table" style="display: none;">
@@ -28,18 +38,28 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
     <script>
+
+        $('#email_report').on('change', function() {
+            if ($(this).val() == '') {
+                $('#email_access_url_form_submit_btn').attr('disabled', true);
+            } else {
+                $('#email_access_url_form_submit_btn').attr('disabled', false);
+            }
+        });
+
+        $('#email_report').on('keyup', function() {
+            if ($(this).val() == '') {
+                $('#email_access_url_form_submit_btn').attr('disabled', true);
+            } else {
+                $('#email_access_url_form_submit_btn').attr('disabled', false);
+            }
+        });
 
         $('#datetime_range').daterangepicker({
             timePicker: true,
@@ -92,6 +112,35 @@
                     }
                 }
             });
+        });
+
+        $('#email_access_url_form_submit_btn').on('click', function(e) {
+            e.preventDefault();
+            $('#email_access_url_form').submit();
+        });
+
+        $('#email_access_url_form').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+
+            $.ajax({
+                url: '/activity/report/email-url',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.error) {
+                        $('.alert-danger').empty();
+                        $('.alert-danger').append('<p>' + response.message + '<p>');
+                        $('.alert-danger').show();
+                    } else {
+                        $('.alert-success').empty();
+                        $('.alert-success').append('<p>' + response.message + '<p>');
+                        $('.alert-success').show();
+                    }
+                }
+            });
+
         });
     </script>
 @endsection
