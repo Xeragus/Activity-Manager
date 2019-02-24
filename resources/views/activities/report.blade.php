@@ -23,6 +23,7 @@
                     <div class="form-group">
                         <label for="email">Send an access URL to this email address:</label>
                         <input type="email" class="form-control" id="email_report" name="email">
+                        <input type="hidden" name="access_url" id="access_url">
                     </div>
                     <button class="btn btn-success" id="email_access_url_form_submit_btn" disabled>E-mail access url</button>
                 </form>
@@ -75,6 +76,11 @@
         $('#generate_report_form').on('submit', function(e) {
             e.preventDefault();
 
+            $('.alert-danger').empty();
+            $('.alert-success').empty();
+            $('.alert-danger').hide();
+            $('.alert-success').hide();
+
             let form = $(this);
 
             $.ajax({
@@ -89,8 +95,12 @@
                     } else {
                         $('#activities_table tbody').empty();
 
+                        $('#access_url').val(response.url);
+
                         if(response.activities.length > 0) {
                             response.activities.map(activity => {
+
+
                                 $('#activities_table tbody').append(
                                     `<tr>
                                     <td>` + activity.description + `</td>
@@ -125,7 +135,7 @@
             let form = $(this);
 
             $.ajax({
-                url: '/activity/report/email-url',
+                url: '/report/email-url',
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {

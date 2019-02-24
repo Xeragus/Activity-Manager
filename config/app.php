@@ -180,7 +180,12 @@ return [
          */
         App\Activity\Providers\FactoryServiceProvider::class,
         App\Activity\Providers\RepositoryServiceProvider::class,
-        App\Activity\Providers\ListServiceProvider::class
+        App\Activity\Providers\ListServiceProvider::class,
+
+        /**
+         * Report Service Providers
+         */
+        App\Report\Providers\RepositoryServiceProvider::class,
 
     ],
 

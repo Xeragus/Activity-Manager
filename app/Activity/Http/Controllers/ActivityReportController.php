@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Activity\ActivityList\ActivityListInterface;
 use App\Activity\Requests\ActivityReportRequest;
-use App\Activity\Requests\EmailUrlToUserRequest;
-use Carbon\Carbon;
+use App\Activity\Services\ActivitiesFilterServiceInterface;
+use App\Report\Commands\GenerateReportCommand;
+use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
 
 class ActivityReportController extends Controller
 {
@@ -14,26 +16,29 @@ class ActivityReportController extends Controller
         return view('activities.report');
     }
 
-    public function report(ActivityReportRequest $request, ActivityListInterface $activityList)
-    {
+    public function report(
+        ActivityReportRequest $request,
+        ActivityListInterface $activityList,
+        EventsDispatcher $eventsDispatcher,
+        Dispatcher $commandBus,
+        ActivitiesFilterServiceInterface $activitiesFilterService
+    ){
         $data = $request->all();
         $error = false;
-        $message = '';
         $activities = [];
+        $url = '';
 
         try {
-            $dateTimeParts = explode(' - ', $data['datetime_range']);
-            $dateTimeTimestampFrom = Carbon::parse($dateTimeParts[0])->getTimestamp();
-            $dateTimeTimestampTo = Carbon::parse($dateTimeParts[1])->getTimestamp();
+            $activities = $activitiesFilterService->filterActivities($data);
 
-            $activityList->filterByUser(auth()->user()->id);
-            $activityList->filterByDatetimeRange($dateTimeTimestampFrom, $dateTimeTimestampTo);
+            if (count($activities) > 0) {
+                $url = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(64/strlen($x)) )),1,64);
+                $commandBus->dispatch(new GenerateReportCommand($activities, $url));
+            }
 
-            $activities = $activityList->getResults();
-
-            $message = count($activities) > 0
-                ? 'Report is generated successfully'
-                    : 'No activities in the selected datetime range';
+            $message = count($activities) > 0 ?
+                'Report is generated successfully' :
+                    'No activities in the selected datetime range';
 
         } catch(\Exception $e) {
             $error = true;
@@ -43,30 +48,8 @@ class ActivityReportController extends Controller
         return response()->json([
             'error' => $error,
             'message' => $message,
-            'activities' => $activities
+            'activities' => $activities,
+            'url' => $url
         ]);
-    }
-
-    public function emailUrlToUser(EmailUrlToUserRequest $request)
-    {
-        $data = $request->all();
-        $error = false;
-        $message = '';
-        $activities = [];
-
-        try {
-
-
-            $message = 'Unique access URL sent to the following e-mail address: ' . $data['email'];
-        } catch(\Exception $e) {
-            $error = true;
-            $message = $e->getMessage();
-        }
-
-        return response()->json([
-            'error' => $error,
-            'message' => $message
-        ]);
-
     }
 }

@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model implements ActivityInterface
 {
+    public function getId(): int
+    {
+        return $this->getAttribute('id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -63,12 +68,22 @@ class Activity extends Model implements ActivityInterface
         return $this->getAttribute('time_spent');
     }
 
+    public function getStartedAt(): string
+    {
+        return Carbon::createFromTimestampUTC($this->getFromDatetime())->toDateTimeString();
+    }
+
+    public function getFinishedAt(): string
+    {
+        return Carbon::createFromTimestampUTC($this->getToDatetime())->toDateTimeString();
+    }
+
     public function jsonSerialize()
     {
         return [
             'description' => $this->getDescription(),
-            'started_at' => Carbon::createFromTimestampUTC($this->getFromDatetime())->toDateTimeString(),
-            'finished_at' => Carbon::createFromTimestampUTC($this->getToDatetime())->toDateTimeString(),
+            'started_at' => $this->getStartedAt(),
+            'finished_at' => $this->getFinishedAt(),
             'time_spent' => $this->getTimeSpent()
         ];
     }

@@ -18,6 +18,11 @@ class EloquentActivityRepository implements ActivityRepositoryInterface
         return Activity::find($id);
     }
 
+    public function getByIds(array $ids): array
+    {
+        return Activity::whereIn('id', $ids)->get()->all();
+    }
+
     public function store(ActivityInterface $activity)
     {
         return $activity->save();

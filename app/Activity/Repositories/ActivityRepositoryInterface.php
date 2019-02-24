@@ -10,5 +10,7 @@ interface ActivityRepositoryInterface
 
     public function get(int $id);
 
+    public function getByIds(array $ids): array;
+
     public function store(ActivityInterface $activity);
 }

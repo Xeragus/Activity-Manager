@@ -21,10 +21,14 @@ Route::get('/', ['as' => 'activity.dashboard', 'uses' => 'ActivityReportControll
 Route::prefix('activity')->group(function () {
     Route::get('/create', ['as' => 'activity.create-form', 'uses' => 'ActivityCreateController@createForm'])->middleware('auth');
 
-    Route::post('/report/email-url', ['as' => 'activity.report.email', 'uses' => 'ActivityReportController@emailUrlToUser']);
-
     Route::post('/create', ['as' => 'activity.create', 'uses' => 'ActivityCreateController@create']);
 
     Route::post('/report', ['as' => 'activity.report', 'uses' => 'ActivityReportController@report']);
+});
+
+Route::prefix('report')->group(function() {
+    Route::get('/{url}', ['as' => 'report.access-url', 'uses' => 'ReportReviewThroughAccessUrlController@display']);
+
+    Route::post('/email-url', ['as' => 'report.email.url', 'uses' => 'EmailAccessUrlToUserController@emailUrlToUser']);
 });
 
